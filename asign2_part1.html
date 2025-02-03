@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="weatherApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #e1f5fe; /* Light blue background */
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 450px;
+            margin: 50px auto;
+            background: linear-gradient(135deg, #64b5f6, #1976d2); /* Gradient background */
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            color: white;
+            animation: fadeIn 1.5s;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        input, button {
+            padding: 12px;
+            margin: 10px 0;
+            width: 100%;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+        }
+        input {
+            background-color: #fff;
+            color: #333;
+        }
+        button {
+            background-color: #ff6f61;
+            color: white;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #e55b50;
+        }
+        .weather-container {
+            margin-top: 20px;
+            animation: slideIn 1s;
+        }
+        .weather-container h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        .weather-container p {
+            font-size: 1.1rem;
+        }
+        .error {
+            color: #ff7043;
+            font-weight: bold;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #fff;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body ng-controller="WeatherController">
+    <div class="container">
+        <h1>Weather Dashboard</h1>
+        <input type="text" ng-model="city" placeholder="Enter city in India">
+        <button ng-click="getWeather()">Get Weather</button>
+        <div class="weather-container" ng-if="weather">
+            <h2>{{ weather.location.name }}, {{ weather.location.region }}</h2>
+            <p>Temperature: {{ weather.current.temp_c }} &#8451;</p>
+            <p>Humidity: {{ weather.current.humidity }}%</p>
+            <p>Conditions: {{ weather.current.condition.text }}</p>
+        </div>
+        <p class="error" ng-if="error">{{ error }}</p>
+        <div class="footer">
+            <p>Powered by <a href="https://www.weatherapi.com/" target="_blank" style="color: #ff6f61;">WeatherAPI</a></p>
+        </div>
+    </div>
+    
+    <script>
+        var app = angular.module('weatherApp', []);
+        app.controller('WeatherController', function($scope, $http) {
+            $scope.getWeather = function() {
+                var apiKey = '5fbf0132a846454cbb0101448250302';
+                var url = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${$scope.city},India`;
+                
+                $http.get(url).then(function(response) {
+                    $scope.weather = response.data;
+                    $scope.error = '';
+                }, function(error) {
+                    $scope.weather = null;
+                    $scope.error = 'City not found or API error';
+                });
+            };
+        });
+    </script>
+</body>
+</html>
